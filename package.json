@@ -1,0 +1,45 @@
+{
+  "name": "torch",
+  "description": "Wrapper for BungieNetPlatformJS",
+  "version": "1.0.0",
+  "license": "MIT",
+  "author": "dazarobbo",
+  "keywords": [
+    "bungie"
+  ],
+  "homepage": "https://github.com/dazarobbo/Torch#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dazarobbo/Torch.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dazarobbo/Torch/issues"
+  },
+  "main": "./lib/index.js",
+  "bin": {},
+  "scripts": {
+    "clean": "rimraf lib/*",
+    "test": "mocha ./test/main.js",
+    "prebuild": "npm run clean",
+    "build:watch": "watch \"npm run build\" src/",
+    "build:js": "babel src/ -d lib/",
+    "build": "npm run build:js"
+  },
+  "man": "",
+  "config": {},
+  "private": false,
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-preset-es2015": "^6.18.0",
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0",
+    "rimraf": "^2.5.4",
+    "watch": "^1.0.1"
+  },
+  "dependencies": {
+    "bignumber.js": "^3.0.1",
+    "bungienetplatformjs": "^0.3.8",
+    "extendable-error-class": "^0.1.1",
+    "winston": "^2.3.0"
+  }
+}
