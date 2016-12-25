@@ -1,5 +1,6 @@
 {
   "root": true,
+  "parser": "babel-eslint",
   "parserOptions": {
     "ecmaVersion": 6,
     "sourceType": "module",
@@ -226,7 +227,6 @@
       3
     ],
     "new-parens": "error",
-    "newline-after-var": "error",
     "newline-per-chained-call": [
       "error",
       {
@@ -293,8 +293,8 @@
       "error",
       {
         "require": {
-          "FunctionDeclaration": true,
-          "MethodDefinition": true,
+          "FunctionDeclaration": false,
+          "MethodDefinition": false,
           "ClassDeclaration": true,
           "ArrowFunctionExpression": false
         }
