@@ -1,7 +1,7 @@
 {
   "name": "platform-torch",
   "description": "Wrapper for BungieNetPlatformJS",
-  "version": "1.0.1",
+  "version": "0.1.1",
   "license": "MIT",
   "author": "dazarobbo",
   "keywords": [
