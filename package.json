@@ -1,5 +1,5 @@
 {
-  "name": "torch",
+  "name": "platform-torch",
   "description": "Wrapper for BungieNetPlatformJS",
   "version": "1.0.0",
   "license": "MIT",
