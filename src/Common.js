@@ -1,3 +1,5 @@
+import tmp from "tmp";
+
 export default class Common {
 
   /**
@@ -20,6 +22,20 @@ export default class Common {
 
     return target;
 
+  }
+
+  static tempFile() {
+    return new Promise((resolve, reject) => {
+      tmp.file((err, path, fd, cleanup) => {
+
+        if(err) {
+          return reject();
+        }
+
+        return resolve(path);
+
+      });
+    });
   }
 
 }

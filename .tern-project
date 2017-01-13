@@ -1,5 +1,5 @@
 {
-  "ecmaVersion": 6,
+  "ecmaVersion": 7,
   "libs": [],
   "plugins": {
     "complete_strings": {
@@ -8,6 +8,12 @@
     "doc_comment": {
       "fullDocs": true,
       "strong": false
-    }
+    },
+    "node": {
+      "dontLoad": "",
+      "load": "",
+      "modules": ""
+    },
+    "es_modules": {}
   }
 }

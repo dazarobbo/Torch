@@ -2,6 +2,8 @@ import BungieNet from "bungienetplatformjs";
 import OAuth from "./OAuth/OAuth.js";
 import Tag from "./Tag.js";
 import PlatformError from "./PlatformError.js";
+import Post from "./Post.js";
+import BasicUser from "./BasicUser.js";
 
 /**
  * Torch
@@ -14,6 +16,19 @@ export default class Torch {
   constructor(p) {
     this._platform = p;
     this.OAuth = new OAuth(p);
+  }
+
+  static _parseTopicResponse(t, response) {
+
+    const topic = new Post(t);
+
+    topic.author = new BasicUser(response
+      .authors
+      .filter(a => a.membershipId === t.authorMembershipId)[0]
+    );
+
+    return topic;
+
   }
 
   async ok() {
@@ -30,27 +45,38 @@ export default class Torch {
   async getTopics(tags = [], page = 0, sort = Torch.FORUM_SORT) {
 
     let _tags = tags;
+    const topicArr = [];
 
     if(typeof tags === "string") {
       _tags = Tag.fromString(tags);
     }
 
     const r = await this._platform.getTopicsPaged({
-      tagstring: _tags.map(t => t.toString()).join(","),
+      tagString: _tags.map(t => t.toString()).join(","),
       page,
+      pageSize: Torch.FORUM_PAGE_SIZE,
       sort,
-      pageSize: Torch.TOPIC_PAGE_SIZE
+      group: Torch.NO_GROUP_ID,
+      quickDate: Torch.FORUM_QUICK_DATE,
+      categoryFilter: Torch.FORUM_CATEGORY
     });
 
     if(r.isError) {
       throw PlatformError.fromResponse(r);
     }
 
-    //parse response into objects and return
+    for(const topic of r.response.results) {
+      topicArr.push(Torch._parseTopicResponse(topic, r.response));
+    }
+
+    return topicArr;
 
   }
 
 }
 
-Torch.TOPIC_PAGE_SIZE = 25;
+Torch.FORUM_PAGE_SIZE = 25;
 Torch.FORUM_SORT = BungieNet.enums.forumTopicsSort.last_replied;
+Torch.FORUM_QUICK_DATE = BungieNet.enums.forumTopicsQuickDate.all;
+Torch.FORUM_CATEGORY = BungieNet.enums.forumTopicsCategoryFilters.none;
+Torch.NO_GROUP_ID = 0;
