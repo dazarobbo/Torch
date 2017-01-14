@@ -1,8 +1,10 @@
 import BungieNet from "bungienetplatformjs";
 import fs from "fs";
+import path from "path";
 import request from "request";
 import AdmZip from "adm-zip";
 import tmp from "tmp";
+import ContentDatabase from "./ContentDatabase.js";
 
 /**
  *
@@ -29,6 +31,17 @@ export default class Manifest {
   }
 
   /**
+   * Returns the hash for a filepath in the manifest according to the language
+   * key
+   * @param {String} lang - language key of hash to get
+   * @return {String} hash
+   */
+  worldContentHash(lang) {
+    const filename = path.basename(this.mobileWorldContentPaths[lang]);
+    return ContentDatabase.parseHash(filename);
+  }
+
+  /**
    * @param {String} lang - language key of content to download
    * @return {String} path to temp sqlite file
    */
@@ -39,12 +52,13 @@ export default class Manifest {
   }
 
   /**
+   * Downloads the content at the given url and saves it into a temporary file
    * @param {String} url -
-   * @return {String} path to temp zip file
+   * @return {String} path to temp file
    */
   static downloadContent(url) {
     return new Promise((resolve, reject) => {
-      tmp.file((fErr, zipPath) => {
+      tmp.file((fErr, fPath) => {
 
         if(fErr) {
           return reject(fErr);
@@ -52,27 +66,30 @@ export default class Manifest {
 
         request({ url, encoding: null })
           .on("error", netErr => reject(netErr))
-          .pipe(fs.createWriteStream(zipPath))
-          .on("finish", () => resolve(zipPath));
+          .pipe(fs.createWriteStream(fPath))
+          .on("finish", () => resolve(fPath));
 
       });
     });
   }
 
   /**
+   * Creates a temporary directory and extracts the first entry from the zip
+   * into it
    * @param {String} file - path to zip file
    * @return {String} path to temp file containing content
    */
   static unzipContent(file) {
     return new Promise((resolve, reject) => {
-      tmp.file((fErr, oPath) => {
+      tmp.dir((dirErr, dirPath) => {
 
-        if(fErr) {
-          return reject(fErr);
+        if(dirErr) {
+          return reject(dirErr);
         }
 
         const zip = new AdmZip(file);
         const entry = zip.getEntries()[0];
+        const oPath = path.join(dirPath, entry.entryName);
 
         zip.readFileAsync(entry, buff => {
           fs.writeFile(oPath, buff, err => {

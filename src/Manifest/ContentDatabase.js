@@ -1,4 +1,5 @@
 import sqlite3 from "sqlite3";
+import path from "path";
 
 /**
  *
@@ -6,6 +7,7 @@ import sqlite3 from "sqlite3";
 export default class ContentDatabase {
 
   constructor(sqlFile) {
+    this._filepath = sqlFile;
     this.db = new sqlite3.Database(sqlFile);
     this._initalised = false;
     this._tables = [];
@@ -30,6 +32,16 @@ export default class ContentDatabase {
       });
 
     });
+  }
+
+  /**
+   * This will only work if the database was loaded with a filename containing
+   * the original hash (ie. world_sql_content_{hex}.content)
+   * @return {String} database hash
+   */
+  getHash() {
+    const filename = path.basename(this._filepath);
+    return ContentDatabase.parseHash(filename);
   }
 
   /**
@@ -84,6 +96,23 @@ export default class ContentDatabase {
       return reject(`no match found for ${ id } in any table`);
 
     });
+  }
+
+  /**
+   * @param {String} filename - filename of the database containing a hash
+   * @return {String} hash value
+   */
+  static parseHash(filename) {
+
+    const regex = /world_sql_content_(.+)\.content/i;
+    const matches = filename.match(regex);
+
+    if(matches) {
+      return matches[1];
+    }
+
+    return null;
+
   }
 
 }
